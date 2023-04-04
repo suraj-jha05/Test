@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
+    //making a reference to UI resume button in our main menu scene
     public Button resumeBtn;
 
     private void Awake()
@@ -13,21 +14,37 @@ public class Menu : MonoBehaviour
 
         
     }
+
     private void Start()
     {
-        resumeBtn.enabled = true;
+        resumeBtn.interactable = false;
+
+        bool prev = false;
+        //1. check if there is a prev game or not
+        for (int i = 0; i < 9; i++)
+        {
+
+            if (PlayerPrefs.HasKey(System.Convert.ToString(i)))
+            {
+                prev = true;
+                break;
+            }
+
+        }
+
+        //case 1. -> there is "No" prev game -> make resume btn as disable
+        if (prev)
+        {
+            Debug.Log("Resume Button is enabled, since, there is a prev game!");
+            resumeBtn.interactable = true;
+        }
+
+        //else -> leave it disabled
     }
 
     public void NewGame()
     {
         //empty the playerprefs
-        /*for (int i = 0; i < 9; i++)
-        {
-            PlayerPrefs.SetString(System.Convert.ToString(i), null);
-        }
-
-        PlayerPrefs.SetString("Turn", null);*/
-
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
@@ -37,33 +54,9 @@ public class Menu : MonoBehaviour
 
     public void ResumeGame()
     {
-        bool prev = false;
-        //1. check if there is a prev game or not
-        for (int i = 0; i < 9; i++)
-        {
-            //PlayerPrefs.GetString(System.Convert.ToString(i)) != null
-            if (PlayerPrefs.HasKey(System.Convert.ToString(i)))
-            {
-                prev = true;
-                break;
-            }
-            
-        }
-
-       
-
-        //case 1. -> there is "No" prev game -> make resume btn as disable
-        if (prev == false)
-        {
-            Debug.Log("Resume Button is disabled, since, there is no prev game!");
-            resumeBtn.enabled = false;
-        }
-
-        //case 2. -> there is a prev game
-        else
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
+        //resume btn is clickable -> means there is a prev game -> so, loading the next scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        
     }
 
     public void QuitGame()
